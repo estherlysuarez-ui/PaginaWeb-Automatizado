@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <meta charset="utf-8">
+   <title>Animación VR/AR</title>
+   <meta name="description" content="Animación en A-Frame">
+   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+ </head>
+ <body>
+ <a-scene background="color: #000011" embedded arjs>
+   <!-- Cámara -->
+   <a-entity camera position="0 2 5" look-controls></a-entity>
+
+   <!-- Esfera central (como un sol) -->
+   <a-sphere position="0 1.5 0" radius="0.5" color="#FFD700" emissive="#FFAA00" shadow></a-sphere>
+
+   <!-- Planeta 1 girando -->
+   <a-entity position="0 1.5 0" rotation="0 0 0"
+             animation="property: rotation; to: 0 360 0; loop: true; dur: 6000; easing: linear">
+     <a-sphere position="2 0 0" radius="0.2" color="#00BFFF" shadow></a-sphere>
+   </a-entity>
+
+   <!-- Planeta 2 girando más rápido -->
+   <a-entity position="0 1.5 0" rotation="0 0 0"
+             animation="property: rotation; to: 0 -360 0; loop: true; dur: 3000; easing: linear">
+     <a-sphere position="3 0 0" radius="0.3" color="#FF4500" shadow></a-sphere>
+   </a-entity>
+
+   <!-- Planeta 3 con órbita inclinada -->
+   <a-entity position="0 1.5 0" rotation="45 0 0"
+             animation="property: rotation; to: 45 360 0; loop: true; dur: 8000; easing: linear">
+     <a-sphere position="4 0 0" radius="0.25" color="#ADFF2F" shadow></a-sphere>
+   </a-entity>
+
+   <!-- Suelo para referencia -->
+   <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20"
+            color="#222831" shadow></a-plane>
+ </a-scene>
+ </body>
+</html>
