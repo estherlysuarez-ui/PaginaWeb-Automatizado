@@ -1,75 +1,68 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Cinta Transportadora Mejorada</title>
-    <meta name="description" content="Simulación mecatrónica en A-Frame">
-    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene background="color: #ECECEC"
-             vr-mode-ui="enterVRButton: #vrButton"
-             ar-mode-ui="enterARButton: #arButton"
-             shadow="type: pcfsoft">
-      
-      <!-- Luces -->
-      <a-entity light="type: ambient; intensity: 0.5"></a-entity>
-      <a-entity light="type: directional; intensity: 0.8; castShadow: true"
-                position="5 10 5"></a-entity>
+<head>
+  <meta charset="utf-8">
+  <title>Cinta Transportadora Profesional</title>
+  <meta name="description" content="Simulación mecatrónica VR/AR">
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+</head>
+<body>
+  <a-scene background="color: #ECECEC"
+           vr-mode-ui="enterVRButton: #vrButton"
+           ar-mode-ui="enterARButton: #arButton"
+           shadow="type: pcfsoft">
 
-      <!-- Cámara -->
-      <a-entity camera position="0 3 10" look-controls></a-entity>
+    <!-- Luces -->
+    <a-entity light="type: ambient; intensity: 0.6"></a-entity>
+    <a-entity light="type: directional; intensity: 0.8; castShadow: true" position="5 10 5"></a-entity>
 
-      <!-- Piso metálico -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30"
-               color="#999" shadow
-               material="src: https://cdn.aframe.io/a-painter/images/floor.jpg; repeat: 8 8"></a-plane>
+    <!-- Cámara -->
+    <a-entity camera position="0 4 12" look-controls></a-entity>
 
-      <!-- Base de la cinta -->
-      <a-box position="0 1 0" depth="8" height="0.4" width="3.5" color="#333" shadow></a-box>
+    <!-- Piso industrial -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#777" shadow
+             material="metalness:0.3; roughness:0.8"></a-plane>
 
-      <!-- Soportes laterales -->
-      <a-box position="-1.9 1 0" depth="8" height="1" width="0.2" color="#555"></a-box>
-      <a-box position="1.9 1 0" depth="8" height="1" width="0.2" color="#555"></a-box>
+    <!-- Base de la cinta -->
+    <a-box position="0 1 0" depth="8" height="0.4" width="3.5" color="#444" shadow
+           material="metalness:0.7; roughness:0.3"></a-box>
 
-      <!-- Banda transportadora (efecto de movimiento con animación UV) -->
-      <a-box position="0 1.2 0" depth="8" height="0.1" width="3"
-             material="src: https://cdn.pixabay.com/photo/2017/05/13/16/53/road-2319409_1280.jpg; repeat: 1 4"
-             shadow></a-box>
+    <!-- Soportes laterales -->
+    <a-box position="-1.9 1 0" depth="8" height="1" width="0.2" color="#555" material="metalness:0.8; roughness:0.2"></a-box>
+    <a-box position="1.9 1 0" depth="8" height="1" width="0.2" color="#555" material="metalness:0.8; roughness:0.2"></a-box>
 
-      <!-- Rodillo delantero -->
-      <a-cylinder position="0 1.2 4" rotation="0 0 90" radius="0.4" height="3.2" color="#666"
-                  material="metalness:0.7; roughness:0.2"
-                  animation="property: rotation; to: 0 0 360; loop: true; dur: 2000; easing: linear"
-                  shadow></a-cylinder>
+    <!-- Rodillos metálicos -->
+    <a-cylinder position="0 1.2 4" rotation="0 0 90" radius="0.45" height="3.2" color="#666"
+                material="metalness:0.9; roughness:0.1" shadow
+                animation="property: rotation; to: 0 0 360; loop: true; dur: 2000; easing: linear"></a-cylinder>
+    <a-cylinder position="0 1.2 -4" rotation="0 0 90" radius="0.45" height="3.2" color="#666"
+                material="metalness:0.9; roughness:0.1" shadow
+                animation="property: rotation; to: 0 0 -360; loop: true; dur: 2000; easing: linear"></a-cylinder>
 
-      <!-- Rodillo trasero -->
-      <a-cylinder position="0 1.2 -4" rotation="0 0 90" radius="0.4" height="3.2" color="#666"
-                  material="metalness:0.7; roughness:0.2"
-                  animation="property: rotation; to: 0 0 -360; loop: true; dur: 2000; easing: linear"
-                  shadow></a-cylinder>
+    <!-- Banda transportadora profesional (caucho) -->
+    <a-box position="0 1.25 0" depth="8" height="0.15" width="3" color="#111"
+           material="metalness:0.1; roughness:0.8; color:#111" shadow></a-box>
 
-      <!-- Caja (cartón con textura) moviéndose continuamente -->
-      <a-box position="0 1.6 -3.8" depth="1" height="1" width="1"
-             material="src: https://i.imgur.com/mYmmbrp.jpg; repeat: 1 1"
-             shadow
-             animation="property: position; to: 0 1.6 3.8; dur: 6000; loop: true; easing: linear"></a-box>
+    <!-- Caja de cartón con textura PBR -->
+    <a-box position="0 1.6 -3.8" depth="1" height="1" width="1"
+           material="src: https://i.imgur.com/mYmmbrp.jpg; metalness:0; roughness:0.6"
+           shadow
+           animation="property: position; to: 0 1.6 3.8; dur: 6000; loop: true; easing: linear"></a-box>
 
-      <!-- Sensor óptico -->
-      <a-box position="1.9 1.7 0" depth="0.2" height="0.5" width="0.1" color="red" shadow></a-box>
+    <!-- Sensor óptico -->
+    <a-box position="1.9 1.7 0" depth="0.2" height="0.5" width="0.1" color="red" shadow></a-box>
 
-      <!-- Actuador neumático (mejorado con textura metálica) -->
-      <a-box position="-2 1.2 0" depth="0.6" height="0.6" width="0.6" color="#444" shadow></a-box>
-      <a-box position="-2 1.8 0" depth="0.3" height="1.2" width="0.3" color="#bbb"
-             shadow
-             animation="property: position; to: -2 2.6 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"></a-box>
+    <!-- Actuador neumático -->
+    <a-box position="-2 1.2 0" depth="0.6" height="0.6" width="0.6" color="#444" shadow></a-box>
+    <a-box position="-2 1.8 0" depth="0.3" height="1.2" width="0.3" color="#bbb" shadow
+           animation="property: position; to: -2 2.6 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"></a-box>
 
-    </a-scene>
+  </a-scene>
 
-    <!-- Botones VR/AR -->
-    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
-      <button id="vrButton" style="padding:10px; background:#444; color:white; border:none; border-radius:5px; margin:5px;">VR</button>
-      <button id="arButton" style="padding:10px; background:#0077cc; color:white; border:none; border-radius:5px; margin:5px;">AR</button>
-    </div>
-  </body>
+  <!-- Botones VR/AR -->
+  <div style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
+    <button id="vrButton" style="padding:10px; background:#444; color:white; border:none; border-radius:5px; margin:5px;">VR</button>
+    <button id="arButton" style="padding:10px; background:#0077cc; color:white; border:none; border-radius:5px; margin:5px;">AR</button>
+  </div>
+</body>
 </html>
