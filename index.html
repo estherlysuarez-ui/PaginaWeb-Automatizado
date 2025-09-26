@@ -1,68 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <title>Cinta Transportadora Profesional</title>
-  <meta name="description" content="Simulación mecatrónica VR/AR">
-  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <meta name="description" content="Simulación mecatrónica VR/AR con Three.js">
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #vrButton, #arButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #vrButton { background: #444; }
+    #arButton { background: #0077cc; }
+  </style>
 </head>
 <body>
-  <a-scene background="color: #ECECEC"
-           vr-mode-ui="enterVRButton: #vrButton"
-           ar-mode-ui="enterARButton: #arButton"
-           shadow="type: pcfsoft">
+  <button id="vrButton">VR</button>
+  <button id="arButton">AR</button>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/webxr/VRButton.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/webxr/XRButton.js"></script>
 
-    <!-- Luces -->
-    <a-entity light="type: ambient; intensity: 0.6"></a-entity>
-    <a-entity light="type: directional; intensity: 0.8; castShadow: true" position="5 10 5"></a-entity>
+  <script>
+    let scene, camera, renderer, clock;
+    let conveyorBelt, box, beltTextureOffset = 0;
 
-    <!-- Cámara -->
-    <a-entity camera position="0 4 12" look-controls></a-entity>
+    init();
+    animate();
 
-    <!-- Piso industrial -->
-    <a-plane position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#777" shadow
-             material="metalness:0.3; roughness:0.8"></a-plane>
+    function init() {
+      // Escena
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xECECEC);
 
-    <!-- Base de la cinta -->
-    <a-box position="0 1 0" depth="8" height="0.4" width="3.5" color="#444" shadow
-           material="metalness:0.7; roughness:0.3"></a-box>
+      // Cámara
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 100);
+      camera.position.set(0, 5, 12);
 
-    <!-- Soportes laterales -->
-    <a-box position="-1.9 1 0" depth="8" height="1" width="0.2" color="#555" material="metalness:0.8; roughness:0.2"></a-box>
-    <a-box position="1.9 1 0" depth="8" height="1" width="0.2" color="#555" material="metalness:0.8; roughness:0.2"></a-box>
+      // Renderer
+      renderer = new THREE.WebGLRenderer({antialias: true});
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.xr.enabled = true;
+      document.body.appendChild(renderer.domElement);
 
-    <!-- Rodillos metálicos -->
-    <a-cylinder position="0 1.2 4" rotation="0 0 90" radius="0.45" height="3.2" color="#666"
-                material="metalness:0.9; roughness:0.1" shadow
-                animation="property: rotation; to: 0 0 360; loop: true; dur: 2000; easing: linear"></a-cylinder>
-    <a-cylinder position="0 1.2 -4" rotation="0 0 90" radius="0.45" height="3.2" color="#666"
-                material="metalness:0.9; roughness:0.1" shadow
-                animation="property: rotation; to: 0 0 -360; loop: true; dur: 2000; easing: linear"></a-cylinder>
+      // Controles (solo para visualización normal)
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 1, 0);
+      controls.update();
 
-    <!-- Banda transportadora profesional (caucho) -->
-    <a-box position="0 1.25 0" depth="8" height="0.15" width="3" color="#111"
-           material="metalness:0.1; roughness:0.8; color:#111" shadow></a-box>
+      // Luces
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
 
-    <!-- Caja de cartón con textura PBR -->
-    <a-box position="0 1.6 -3.8" depth="1" height="1" width="1"
-           material="src: https://i.imgur.com/mYmmbrp.jpg; metalness:0; roughness:0.6"
-           shadow
-           animation="property: position; to: 0 1.6 3.8; dur: 6000; loop: true; easing: linear"></a-box>
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+      dirLight.position.set(5, 10, 5);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
 
-    <!-- Sensor óptico -->
-    <a-box position="1.9 1.7 0" depth="0.2" height="0.5" width="0.1" color="red" shadow></a-box>
+      // Piso
+      const floorGeo = new THREE.PlaneGeometry(30, 30);
+      const floorMat = new THREE.MeshStandardMaterial({color: 0x777777, metalness: 0.3, roughness: 0.8});
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);
 
-    <!-- Actuador neumático -->
-    <a-box position="-2 1.2 0" depth="0.6" height="0.6" width="0.6" color="#444" shadow></a-box>
-    <a-box position="-2 1.8 0" depth="0.3" height="1.2" width="0.3" color="#bbb" shadow
-           animation="property: position; to: -2 2.6 0; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"></a-box>
+      // Cinta transportadora
+      const beltGeo = new THREE.BoxGeometry(8, 0.2, 3);
+      const beltTex = new THREE.TextureLoader().load('https://i.imgur.com/Fkx3dXG.png'); // textura caucho
+      beltTex.wrapS = beltTex.wrapT = THREE.RepeatWrapping;
+      beltTex.repeat.set(4,1);
+      const beltMat = new THREE.MeshStandardMaterial({map: beltTex, metalness:0.1, roughness:0.9});
+      conveyorBelt = new THREE.Mesh(beltGeo, beltMat);
+      conveyorBelt.position.y = 1.2;
+      conveyorBelt.receiveShadow = true;
+      conveyorBelt.castShadow = true;
+      scene.add(conveyorBelt);
 
-  </a-scene>
+      // Rodillos
+      const rollerGeo = new THREE.CylinderGeometry(0.45, 0.45, 3.2, 32);
+      const rollerMat = new THREE.MeshStandardMaterial({color: 0x666666, metalness:0.9, roughness:0.1});
+      const frontRoller = new THREE.Mesh(rollerGeo, rollerMat);
+      frontRoller.rotation.z = Math.PI/2;
+      frontRoller.position.set(0, 1.2, 4);
+      frontRoller.castShadow = true;
+      scene.add(frontRoller);
 
-  <!-- Botones VR/AR -->
-  <div style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
-    <button id="vrButton" style="padding:10px; background:#444; color:white; border:none; border-radius:5px; margin:5px;">VR</button>
-    <button id="arButton" style="padding:10px; background:#0077cc; color:white; border:none; border-radius:5px; margin:5px;">AR</button>
-  </div>
+      const backRoller = new THREE.Mesh(rollerGeo, rollerMat);
+      backRoller.rotation.z = Math.PI/2;
+      backRoller.position.set(0, 1.2, -4);
+      backRoller.castShadow = true;
+      scene.add(backRoller);
+
+      // Caja
+      const boxGeo = new THREE.BoxGeometry(1,1,1);
+      const boxTex = new THREE.TextureLoader().load('https://i.imgur.com/mYmmbrp.jpg');
+      const boxMat = new THREE.MeshStandardMaterial({map: boxTex, metalness:0, roughness:0.6});
+      box = new THREE.Mesh(boxGeo, boxMat);
+      box.position.set(0,1.6,-3.8);
+      box.castShadow = true;
+      scene.add(box);
+
+      // Actuador neumático
+      const baseAct = new THREE.Mesh(new THREE.BoxGeometry(0.6,0.6,0.6), new THREE.MeshStandardMaterial({color:0x444, metalness:0.7, roughness:0.3}));
+      baseAct.position.set(-2,1.2,0);
+      baseAct.castShadow = true;
+      scene.add(baseAct);
+
+      const piston = new THREE.Mesh(new THREE.BoxGeometry(0.3,1.2,0.3), new THREE.MeshStandardMaterial({color:0xbbb, metalness:0.5, roughness:0.2}));
+      piston.position.set(-2,1.8,0);
+      piston.castShadow = true;
+      scene.add(piston);
+
+      // Botones VR/AR
+      document.getElementById('vrButton').addEventListener('click', () => {
+        document.body.appendChild(VRButton.createButton(renderer));
+      });
+      document.getElementById('arButton').addEventListener('click', () => {
+        document.body.appendChild(XRButton.createButton(renderer));
+      });
+
+      // Reloj para animaciones
+      clock = new THREE.Clock();
+    }
+
+    function animate() {
+      renderer.setAnimationLoop(render);
+    }
+
+    function render() {
+      const delta = clock.getDelta();
+
+      // Movimiento de la caja
+      box.position.z += delta * 1.2;
+      if(box.position.z > 4) box.position.z = -4;
+
+      // Movimiento de la banda (simula desplazamiento)
+      conveyorBelt.material.map.offset.y -= delta * 1.5;
+
+      // Movimiento del pistón
+      const time = clock.getElapsedTime();
+      scene.children.forEach(obj => {
+        if(obj.geometry && obj.geometry.type === "BoxGeometry" && obj.material.color.getHex() === 0xbbb){
+          obj.position.y = 1.8 + Math.sin(time*2)*0.8;
+        }
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', ()=>{
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
